@@ -217,7 +217,7 @@ def filter(link):
 
 	return tabOrateur
 
-def filter2(link):
+#def filter2(link):
 	#Création des fichiers qui contiendront les mots de chaques participants
 	fout4 = open("data/sortie_filter_4.txt","w")	
 
@@ -426,7 +426,6 @@ def filter2(link):
 
 	return text
 
-
 def test(linkIn, linkOut):
 
 	tabOrateur = filter(linkIn)
@@ -464,7 +463,7 @@ def test(linkIn, linkOut):
 		c.writerow([tabLongueur[i], tabOrateur[tabIndice[i]], tabIndice[i], 
 			tabText[i]])
 
-def test2(linkIn, linkOut):
+#def test2(linkIn, linkOut):
 
 	tabOrateur = filter(linkIn)
 	tabIndice = []
@@ -489,7 +488,7 @@ def test2(linkIn, linkOut):
 	for i in range(0,len(tabIndice)-1):
 		c.writerow([tabLongueur[i], tabOrateur[tabIndice[i]], tabIndice[i]])
 
-def test3(linkIn, linkOut):
+#def test3(linkIn, linkOut):
 
 	tabOrateur = filter(linkIn)
 	tabIndice = []
@@ -515,6 +514,6 @@ def test3(linkIn, linkOut):
 		c.writerow([tabLongueur[i], tabOrateur[tabIndice[i]], tabIndice[i]])
 	
 test("data/textToAnalyze.txt", "data/chrono.csv")
-test2("data/textToAnalyze2.txt", "data/chrono2.csv")
-test3("data/textToAnalyze3.txt", "data/chrono3.csv")
+test("data/textToAnalyze2.txt", "data/chrono2.csv")
+test("data/textToAnalyze3.txt", "data/chrono3.csv")
 

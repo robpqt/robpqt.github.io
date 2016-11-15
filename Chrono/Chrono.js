@@ -1,362 +1,332 @@
-//Definition des variables générales
-
-var w = 1000;
-var h = 300;
+//VARIABLES GENERALES
+var w = 900;
+var h = 200;
 var decalage = 20;	
-var tabX = [];
 var unitH = 100;
 var maxRange = w - 50;
 var legendeUnit = 10;
-var legendeDecalage = 150;
 
 var color = d3.scaleOrdinal()
 	.range(["#FFD700", "#4169E1", "#DC143C" ]);
 
-//DEBAT 1
-d3.csv("data/chrono.csv", function(data) {
+chrono("data/chrono.csv");
+chrono("data/chrono2.csv");
+chrono("data/chrono3.csv");
 
-	//Fonction pour avoir la taille en mot du débat
-	var finX;
-	data.forEach(function(d,i) {
-		if(i==data.length-1) {
-			var temp = +d.longueur
-			var temp2 = +d.X 
-			finX = temp + temp2
-		}
-	});
-	var echelle = maxRange/finX;
+//FONCTION CREATION RENDU VISUEL
+function chrono(link) {
+  d3.csv(link, function(data) {
 
-	//On définit le SVG
-	var svg = d3.select("body")
-		.append("svg")
-		.attr("width", w)
-		.attr("height", h)
-		.append("g")
-		.attr("transform", "translate("+decalage+","+(h-decalage)+")")
+    //Mise à l'échelle de la longueur du débat
+    var echelle = maxRange/(+data[data.length-1].longueur+(+data[data.length-1].X));
 
-	//On crée la légende
-	svg.append("text")
-    	.text("Premier Débat")
-    	.attr("y", -(h-50))	
-    	.style("text-align", "center")
+    // LE TITRE
+    d3.select("body")
+      .append("div")
+      .text(function(){
+        if(link=="data/chrono.csv") {
+          return "DEBAT 1"
+        }
+        else if(link=="data/chrono2.csv") {
+          return "DEBAT 2"
+        }
+        else {
+          return "DEBAT 3"
+        }
+      })
+      .style("text-align","center")
 
-	var legende = svg.append("g")
-		.attr("transform", "translate("+200+","+(-(h-50))+")")
-
-	legende.append("rect")
-    	.attr("width", legendeUnit)
-    	.attr("height", legendeUnit)
-    	.style("fill", "#FFD700")
-
-    legende.append("text")
-    	.text("Moderateur")
-    	.attr("x", legendeUnit*2)
-    	.attr("y", legendeUnit)
-
+    //SVG LEGENDE
+    var legende = d3.select("body")
+      .append("svg")
+      .attr("width", 100)
+      .attr("height", h)
+      .append("g")
+      .attr("transform", "translate(0,"+(h-unitH)+")")
+    
+    //LEGENDE MODERATOR
     legende.append("rect")
-    	.attr("x", legendeDecalage)
-    	.attr("width", legendeUnit)
-    	.attr("height", legendeUnit)
-    	.style("fill", "#4169E1")
-
+      .classed("rect1",true)
+      .attr("width", legendeUnit)
+      .attr("height", legendeUnit)
+      .attr("y",0)
+      .style("fill", "#FFD700")
     legende.append("text")
-    	.text("Clinton")
-    	.attr("dx", legendeUnit*2+legendeDecalage)
-    	.attr("dy", legendeUnit)
+      .attr("y",legendeUnit)
+      .attr("x", legendeUnit*2)
+      .classed("pushed", true)
+      .text("Moderateur")
+      .on("click", function() {
+        if(d3.select(this).classed("pushed")==true) {
+          d3.selectAll(".TRUMP")
+            .attr("height",0)
+          d3.selectAll(".CLINTON")
+            .attr("height",0)
+          d3.selectAll(".MODERATOR")
+            .attr("height", unitH)
+          d3.select(this).classed("pushed",false)
+          d3.selectAll(".rect1")
+            .transition(1000)
+            .attr("width", legendeUnit*1.5)
+            .attr("height", legendeUnit*1.5)
+            .attr("transform", "translate(0,"+(-legendeUnit/4)+")")
+        }
+        else {
+          d3.selectAll(".TRUMP")
+            .attr("height",unitH)
+          d3.selectAll(".CLINTON")
+            .attr("height",unitH)
+          d3.selectAll(".MODERATOR")
+            .attr("height", unitH)
+          d3.select(this).classed("pushed",true)
+          d3.selectAll(".rect1")
+            .transition(1000)
+            .attr("width", legendeUnit)
+            .attr("height", legendeUnit)
+            .attr("transform", "translate(0,0)")
+        }
+      })
 
-   	legende.append("rect")
-    	.attr("width", legendeUnit)
-    	.attr("height", legendeUnit)
-    	.attr("x", legendeDecalage*2)
-    	.style("fill", "#DC143C")
-
+    //LEGENDE CLINTON
+    legende.append("rect")
+      .classed("rect2",true)
+      .attr("y", legendeUnit*2)
+      .attr("width", legendeUnit)
+      .attr("height", legendeUnit)
+      .style("fill", "#4169E1")
     legende.append("text")
-    	.text("Trump")
-    	.attr("x", legendeUnit*2+2*legendeDecalage)
-    	.attr("y", legendeUnit)	
+      .attr("x", legendeUnit*2)
+      .attr("y", legendeUnit*3)
+      .classed("pushed", true)
+      .text("Clinton")
+      .on("click", function() {
+        if(d3.select(this).classed("pushed")==true) {
+          d3.selectAll(".MODERATOR")
+            .attr("height",0)
+          d3.selectAll(".TRUMP")
+            .attr("height",0)
+          d3.selectAll(".CLINTON")
+            .attr("height", unitH)
+          d3.select(this).classed("pushed",false)
+          d3.selectAll(".rect2")
+            .transition(1000)
+            .attr("width", legendeUnit*1.5)
+            .attr("height", legendeUnit*1.5)
+            .attr("transform", "translate(0,"+(-legendeUnit/4)+")")
+        }
+        else {
+          d3.selectAll(".MODERATOR")
+            .attr("height",unitH)
+          d3.selectAll(".TRUMP")
+            .attr("height",unitH)
+          d3.selectAll(".CLINTON")
+            .attr("height", unitH)
+          d3.select(this).classed("pushed",true)
+          d3.selectAll(".rect2")
+            .transition(1000)
+            .attr("width", legendeUnit)
+            .attr("height", legendeUnit)
+            .attr("transform", "translate(0,0)")
+        }
+      })
+
+    //LEGENDE TRUMP
+    legende.append("rect")
+      .classed("rect3",true)
+      .attr("width", legendeUnit)
+      .attr("height", legendeUnit)
+      .attr("y", legendeUnit*4)
+      .style("fill", "#DC143C")
+    legende.append("text")
+      .attr("x", legendeUnit*2)
+      .attr("y", legendeUnit*5)
+      .classed("pushed", true)
+      .text("Trump")
+      .on("click", function() {
+        if(d3.select(this).classed("pushed")==true) {
+          d3.selectAll(".CLINTON")
+            .attr("height",0)
+          d3.selectAll(".MODERATOR")
+            .attr("height",0)
+          d3.selectAll(".TRUMP")
+            .attr("height", unitH)
+          d3.select(this).classed("pushed",false)
+          d3.selectAll(".rect3")
+            .transition(1000)
+            .attr("width", legendeUnit*1.5)
+            .attr("height", legendeUnit*1.5)
+            .attr("transform", "translate(0,"+(-legendeUnit/4)+")")
+        }
+        else {
+          d3.selectAll(".CLINTON")
+            .attr("height",unitH)
+          d3.selectAll(".MODERATOR")
+            .attr("height",unitH)
+          d3.selectAll(".TRUMP")
+            .attr("height", unitH)
+          d3.select(this).classed("pushed",true)
+          d3.selectAll(".rect3")
+            .transition(1000)
+            .attr("width", legendeUnit)
+            .attr("height", legendeUnit)
+            .attr("transform", "translate(0,0)")
+        }
+      })
+
+    //LEGENDE INTERRUPTION
+    legende.append("rect")
+      .classed("rect4",true)
+      .attr("width", legendeUnit)
+      .attr("height", legendeUnit)
+      .attr("y", legendeUnit*6)
+      .style("fill", "black")
+    legende.append("text")
+      .attr("x", legendeUnit*2)
+      .attr("y", legendeUnit*7)
+      .classed("interruptionPushed",true)
+      .text("Interruption")
+      .on("click", function() {
+        if(d3.select(this).classed("interruptionPushed")) {
+          d3.selectAll(".interruption").attr("height", function() {
+            return unitH*2
+          })
+          d3.selectAll(".interruption").attr("y", function() {
+            return -(unitH*2);
+          })
+          d3.select(this).classed("interruptionPushed",false)
+          d3.selectAll(".rect4")
+            .transition(1000)
+            .attr("width", legendeUnit*1.5)
+            .attr("height", legendeUnit*1.5)
+            .attr("transform", "translate(0,"+(-legendeUnit/4)+")")
+        }
+        else {
+          d3.selectAll(".interruption").attr("height", function() {
+            return unitH;
+          })
+          d3.selectAll(".interruption").attr("y", function() {
+            return -(unitH);
+          })
+          d3.select(this).classed("interruptionPushed",true)
+          d3.selectAll(".rect4")
+            .transition(1000)
+            .attr("width", legendeUnit)
+            .attr("height", legendeUnit)
+            .attr("transform", "translate(0,0)")
+        }
+      })
 
     var tooltip = d3.select("body")
-	    .append("div")
-	    .attr("class", "tooltip")
-	    .style("position", "absolute")
-	    .style("z-index", "10")
-	    .style("visibility", "hidden")
-	    .style("font-size", "12px")
-	    .style("background", "#eee")
-	    .style("border","solid")
-	    .style("border-width", "5px")
-	    .style("border-color","black")
+      .append("div")
+      .attr("class", "tooltip")
+      .style("position", "absolute")
+      .style("z-index", "10")
+      .style("visibility", "hidden")
+      .style("font-size", "12px")
+      .style("background", "#eee")
+      .style("border","solid")
+      .style("border-width", "2px")
+      .style("border-color","grey")
 
-    //On crée l'axe des X
-	var axisScale = d3.scaleLinear()
-		.domain([0, 90])
-		.range([0, w-50]);
+    //SVG PRINCIPALE
+    var svg = d3.select("body")
+      .append("svg")
+      .attr("width", w)
+      .attr("height", h)
+      .append("g")
+      .attr("transform", "translate("+decalage+","+(h-decalage)+")")
 
-	var xAxis = d3.axisBottom(axisScale)
-		
-	svg.append("g")
-    	.call(xAxis)
+    //CREATION AXE X
+    var axisScale = d3.scaleBand()
+      .domain(["Achieving prosperity", "America's direction","Securing America"])
+      .range([0, maxRange])
+    var xAxis = d3.axisBottom(axisScale)
+    svg.append("g")
+        .call(xAxis)
 
-    //On crée la chrono
+    //CREATION CHRONOLOGIE
     svg.selectAll(".debateUnit")
-    	.data(data)
-    	.enter()
-    	.append("rect")
-    	.on("mouseover", function(d) {
-    		if(d.longueur>20) {
-				d3.select(this)
-				.transition(1000)
-				.attr("y", -(unitH+20))
-			}
+      .data(data)
+      .enter()
+      .append("rect")
+      .attr("class", function(d) {
+        if(d.orateur=="MODERATOR"){
+          return d.orateur;
+        }
+        else if(d.orateur=="CLINTON") {
+          if(d.longueur<20 && d.X>500) {
+            return d.orateur+" "+"interruption";
+          }
+          return d.orateur;
+        }
+        else {
+          if(d.longueur<20 && d.X>500) {
+            return d.orateur+" "+"interruption";
+          }
+          return d.orateur;
+        }
+      })
+      .on("mouseover", function(d) {
+        if(d.longueur>20) {
+        d3.select(this)
+        .transition(1000)
+        .attr("y", -(unitH+20))
+      }
+      tooltip.style("visibility", "visible").text(d.text)
+      })
+      .on("mouseout", function(d) {
+        if(d.longueur>20) {
+          d3.select(this)
+          .transition(1000)
+          .attr("y", -(unitH))
+        }
+      tooltip.style("visibility", "hidden").text(d.text)
 
-			tooltip.style("visibility", "visible").text(d.text)
-		})
-		.on("mouseout", function(d) {
-			if(d.longueur>20) {
-				d3.select(this)
-				.transition(1000)
-				.attr("y", -(unitH))
-			}
+      })
+      .style("fill", function(d) { return color(d.orateur) })
+      .attr("width", function(d) {
+        return d.longueur*echelle;
+      })
+      .attr("x", function(d) {
+        return d.X*echelle;
+      })
+      .transition()
+      .duration(800)  
+      .attr("height", unitH)
+      .attr("y", -unitH)
 
-			tooltip.style("visibility", "hidden").text(d.text)
-		})
-	
-    	.style("fill", function(d) { return color(d.orateur) })
-    	.attr("width", function(d) {
-    		return d.longueur*echelle;
-    	})
-    	.attr("x", function(d) {
-    		return d.X*echelle;
-    	})
-    	.transition()
-    	.duration(2000)	
-    	.attr("height", function(d) {
-    		if(d.longueur<20 && ( d.orateur == "TRUMP" || d.orateur == "CLINTON" ) && d.X>500){return unitH*2}
-    		else{return unitH}
-    	})
-    	.attr("y", function(d) {
-    		if(d.longueur<20 && ( d.orateur == "TRUMP" || d.orateur == "CLINTON" ) && d.X>500){return -(unitH*2)}
-    		else{return -unitH}
-    	})
-    	
+    //DEBUT DU ZOOM
+    /*var axisScale2 = d3.scaleOrdinal()
+      .domain([0,90])
+      .range([0, maxRange])
+    var xAxis2 = d3.axisBottom(axisScale2)
+    svg.append("g")
+      .attr("transform", "translate(0,"+(h-300)+")")
+      .call(xAxis2)
+      .append("rect").attr("width", maxRange).attr("height",30)
+        .attr("y",-30)
+        .style("fill", "red")
+        .style("opacity","0.4")
+    d3.brushX()*/
 
+    //AFFICHAGE TEXTE DANS UN CADRE A DROITE
+    /*//DIV AFFICHAGE TEXTE
+    var letexte = d3.select("body")
+      .select(".container").append("svg").attr("width",15000).attr("height",300)
+      .append("g")
+      .attr("transform", "translate(10,20)")
+    letexte.append("rect").attr("width",300).attr("height",300)
+      .style("opacity",0.1).style("stroke","red").style("stroke-width","3px") 
+    letexte.append("text")
+      .classed("divText",true)
+      //.classed("divText",true)
+      //.style("align-self","flex-start")
+      /*.style("background", "#eee")
+      .style("border","solid")
+      .style("border-width", "0.5px")
+      .style("border-color","grey")
+      .text("Passez votre curseur sur le débat")*/
 
+  })
+}
 
-})
-
-//DEBAT 2
-d3.csv("data/chrono2.csv", function(data) {
-
-
-	var finX;
-	data.forEach(function(d,i) {
-		if(i==data.length-1) {
-			var temp = +d.longueur
-			var temp2 = +d.X 
-			finX = temp + temp2
-		}
-	});
-	var echelle = maxRange/finX;
-
-	var svg = d3.select("body")
-		.append("svg")
-		.attr("width", w)
-		.attr("height", h)
-		.append("g")
-		.attr("transform", "translate("+decalage+","+(h-decalage)+")")
-
-	svg.append("text")
-    	.text("Second Débat")
-    	.attr("y", -(h-50))
-
-    var legende = svg.append("g")
-		.attr("transform", "translate("+200+","+(-(h-50))+")")
-
-	legende.append("rect")
-    	.attr("width", legendeUnit)
-    	.attr("height", legendeUnit)
-    	.style("fill", "#FFD700")
-
-    legende.append("text")
-    	.text("Moderateur")
-    	.attr("x", legendeUnit*2)
-    	.attr("y", legendeUnit)
-
-    legende.append("rect")
-    	.attr("x", legendeDecalage)
-    	.attr("width", legendeUnit)
-    	.attr("height", legendeUnit)
-    	.style("fill", "#4169E1")
-
-    legende.append("text")
-    	.text("Clinton")
-    	.attr("dx", legendeUnit*2+legendeDecalage)
-    	.attr("dy", legendeUnit)
-
-   	legende.append("rect")
-    	.attr("width", legendeUnit)
-    	.attr("height", legendeUnit)
-    	.attr("x", legendeDecalage*2)
-    	.style("fill", "#DC143C")
-
-    legende.append("text")
-    	.text("Trump")
-    	.attr("x", legendeUnit*2+2*legendeDecalage)
-    	.attr("y", legendeUnit)
-
-	var axisScale = d3.scaleLinear()
-		.domain([0, 90])
-		.range([0, w-50]);
-
-	var xAxis = d3.axisBottom(axisScale)
-		
-	svg.append("g")
-    	.call(xAxis)
-
-    svg.selectAll(".debateUnit")
-    	.data(data)
-    	.enter()
-    	.append("rect")
-    	.on("mouseover", function(d) {
-    		if(d.longueur>20) {
-				d3.select(this)
-				.transition(1000)
-				.attr("y", -(unitH+20))
-			}
-		})
-		.on("mouseout", function(d) {
-			if(d.longueur>20) {
-				d3.select(this)
-				.transition(1000)
-				.attr("y", -(unitH))
-			}
-		})
-    	.style("fill", function(d) { return color(d.orateur) })
-    	.attr("width", function(d) {
-    		return d.longueur*echelle;
-    	})
-    	.attr("x", function(d) {
-    		return d.X*echelle;
-    	})
-    	.transition()
-    	.duration(2000)	
-    	.attr("height", function(d) {
-    		if(d.longueur<20 && ( d.orateur == "TRUMP" || d.orateur == "CLINTON" ) && d.X>500){return unitH*2}
-    		else{return unitH}
-    	})
-    	.attr("y", function(d) {
-    		if(d.longueur<20 && ( d.orateur == "TRUMP" || d.orateur == "CLINTON" ) && d.X>500){return -(unitH*2)}
-    		else{return -unitH}
-    	})
-
-
-    
-
-})
-// DEBAT 3
-d3.csv("data/chrono3.csv", function(data) {
-
-	var finX;
-	data.forEach(function(d,i) {
-		if(i==data.length-1) {
-			var temp = +d.longueur
-			var temp2 = +d.X 
-			finX = temp + temp2
-		}
-	});
-	var echelle = maxRange/finX;
-
-	var svg = d3.select("body")
-		.append("svg")
-		.attr("width", w)
-		.attr("height", h)
-		.append("g")
-		.attr("transform", "translate("+decalage+","+(h-decalage)+")")
-
-	svg.append("text")
-    	.text("Troisième Débat")
-    	.attr("y", -(h-50))	
-    	.style("text-align", "center")
-
-	var legende = svg.append("g")
-		.attr("transform", "translate("+200+","+(-(h-50))+")")
-
-	legende.append("rect")
-    	.attr("width", legendeUnit)
-    	.attr("height", legendeUnit)
-    	.style("fill", "#FFD700")
-
-    legende.append("text")
-    	.text("Moderateur")
-    	.attr("x", legendeUnit*2)
-    	.attr("y", legendeUnit)
-
-    legende.append("rect")
-    	.attr("x", legendeDecalage)
-    	.attr("width", legendeUnit)
-    	.attr("height", legendeUnit)
-    	.style("fill", "#4169E1")
-
-    legende.append("text")
-    	.text("Clinton")
-    	.attr("dx", legendeUnit*2+legendeDecalage)
-    	.attr("dy", legendeUnit)
-
-   	legende.append("rect")
-    	.attr("width", legendeUnit)
-    	.attr("height", legendeUnit)
-    	.attr("x", legendeDecalage*2)
-    	.style("fill", "#DC143C")
-
-    legende.append("text")
-    	.text("Trump")
-    	.attr("x", legendeUnit*2+2*legendeDecalage)
-    	.attr("y", legendeUnit)
-
-	var axisScale = d3.scaleLinear()
-		.domain([0, 90])
-		.range([0, w-50]);
-
-	var xAxis = d3.axisBottom(axisScale)
-		
-	svg.append("g")
-    	.call(xAxis)
-
-    svg.selectAll(".debateUnit")
-    	.data(data)
-    	.enter()
-    	.append("rect")
-    	.on("mouseover", function(d) {
-    		if(d.longueur>20) {
-				d3.select(this)
-				.transition(1000)
-				.attr("y", -(unitH+20))
-			}
-		})
-		.on("mouseout", function(d) {
-			if(d.longueur>20) {
-				d3.select(this)
-				.transition(1000)
-				.attr("y", -(unitH))
-			}
-		})
-    	.style("fill", function(d) { return color(d.orateur) })
-    	.attr("width", function(d) {
-    		return d.longueur*echelle;
-    	})
-    	.attr("x", function(d) {
-    		return d.X*echelle;
-    	})
-    	.transition()
-    	.duration(2000)	
-    	.attr("height", function(d) {
-    		if(d.longueur<20 && ( d.orateur == "TRUMP" || d.orateur == "CLINTON" ) && d.X>500){return unitH*2}
-    		else{return unitH}
-    	})
-    	.attr("y", function(d) {
-    		if(d.longueur<20 && ( d.orateur == "TRUMP" || d.orateur == "CLINTON" ) && d.X>500){return -(unitH*2)}
-    		else{return -unitH}
-    	})
-    		   
-
-})
