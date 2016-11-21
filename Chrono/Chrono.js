@@ -10,8 +10,8 @@ var color = d3.scaleOrdinal()
 	.range(["#FFD700", "#4169E1", "#DC143C" ]);
 
 chrono("data/chrono.csv");
-chrono("data/chrono2.csv");
-chrono("data/chrono3.csv");
+//chrono("data/chrono2.csv");
+//chrono("data/chrono3.csv");
 
 //FONCTION CREATION RENDU VISUEL
 function chrono(link) {
@@ -21,7 +21,7 @@ function chrono(link) {
     var echelle = maxRange/(+data[data.length-1].longueur+(+data[data.length-1].X));
 
     // LE TITRE
-    d3.select("body")
+    var titre = d3.select("body")
       .append("div")
       .text(function(){
         if(link=="data/chrono.csv") {
@@ -35,7 +35,76 @@ function chrono(link) {
         }
       })
       .style("text-align","center")
+    
+    var recherche = d3.select("body")
+      .append("form")
+    recherche.append("input")
+        .attr("id","recherche")
+        .attr("type","text")
+        .attr("placeholder","Rechercher un mot")
+    recherche.append("input").attr("type","button")
+      .attr("value","Rechercher")
 
+    var inputElem = d3.selectAll("input")
+
+    var tab=[];
+    var i=0;
+    for(i=0; i<data.length; i++){
+      var temp = data[i].text;
+      temp = temp.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"")
+      temp = temp.toLowerCase();
+      tab[i] = temp.split(" ");
+    } 
+
+    console.log(tab[0])
+
+    //FONCTION DE RECHERCHE
+    inputElem.on("change", inputChange)
+    function inputChange() {
+      var temp = this.value;
+      var tabRecherche = temp.split(" ");
+      var longeurTabRecherche = tabRecherche.length;
+      var tot = 0;
+      var tabIndice = [];
+      var incr1=0;
+
+      var j=0;
+      var k=0;
+      var l=0;
+
+      d3.selectAll(".debateUnit").attr("y", -unitH)
+
+      for(j=0; j<data.length; j++){
+       // alert("TEST UNO, j: "+j)
+        for(k=0; k<tab[j].length-longeurTabRecherche; k++) {
+          //alert("TEST DUO, k "+k)
+          if(tabRecherche[0]==tab[j][k]){
+            var incr = 0;
+            tot=0;
+            for(l=k; l<(k+longeurTabRecherche); l++) {
+              if(tab[j][l]==tabRecherche[incr]) {
+                tot+=1;              }
+              incr+=1;
+            }         
+            if(tot==longeurTabRecherche){
+              tabIndice.push(j);
+              break;
+            }  
+          }
+        }
+      }
+
+      for(j=0; j<data.length; j++){
+        if(j==tabIndice[incr1]) {
+          console.log("je rentre ici")
+          d3.select(".unit"+j)
+            .transition(1000)
+            .attr("y", -(unitH+20))
+
+          incr1+=1;
+        }
+      }
+    }
     //SVG LEGENDE
     var legende = d3.select("body")
       .append("svg")
@@ -47,153 +116,203 @@ function chrono(link) {
     //LEGENDE MODERATOR
     legende.append("rect")
       .classed("rect1",true)
-      .attr("width", legendeUnit)
-      .attr("height", legendeUnit)
-      .attr("y",0)
+      .classed("pushable", true)
+      .attr("width", legendeUnit*1.5)
+      .attr("height", legendeUnit*1.5)
+      .attr("transform", "translate(0,"+(-legendeUnit/4)+")")
       .style("fill", "#FFD700")
+      .on("click", function() {
+        if(d3.selectAll(".rect4").classed("interruptionpushable")==true){
+          if(d3.select(this).classed("pushable")==true) {
+            d3.selectAll(".MODERATOR")
+              .attr("height", 0)
+            d3.select(this).classed("pushable",false)
+            d3.selectAll(".rect1")
+              .transition(1000)
+              .attr("width", legendeUnit)
+              .attr("height", legendeUnit)
+              .attr("transform", "translate(0,0)")
+          }
+          else {
+            d3.selectAll(".MODERATOR")
+              .attr("height", unitH)
+            d3.select(this).classed("pushable",true)
+            d3.selectAll(".rect1")
+              .transition(1000)
+              .attr("width", legendeUnit*1.5)
+              .attr("height", legendeUnit*1.5)
+              .attr("transform", "translate(0,"+(-legendeUnit/4)+")")
+          }
+        }
+          
+      })
     legende.append("text")
       .attr("y",legendeUnit)
       .attr("x", legendeUnit*2)
-      .classed("pushed", true)
       .text("Moderateur")
-      .on("click", function() {
-        if(d3.select(this).classed("pushed")==true) {
-          d3.selectAll(".TRUMP")
-            .attr("height",0)
-          d3.selectAll(".CLINTON")
-            .attr("height",0)
-          d3.selectAll(".MODERATOR")
-            .attr("height", unitH)
-          d3.select(this).classed("pushed",false)
-          d3.selectAll(".rect1")
-            .transition(1000)
-            .attr("width", legendeUnit*1.5)
-            .attr("height", legendeUnit*1.5)
-            .attr("transform", "translate(0,"+(-legendeUnit/4)+")")
-        }
-        else {
-          d3.selectAll(".TRUMP")
-            .attr("height",unitH)
-          d3.selectAll(".CLINTON")
-            .attr("height",unitH)
-          d3.selectAll(".MODERATOR")
-            .attr("height", unitH)
-          d3.select(this).classed("pushed",true)
-          d3.selectAll(".rect1")
-            .transition(1000)
-            .attr("width", legendeUnit)
-            .attr("height", legendeUnit)
-            .attr("transform", "translate(0,0)")
-        }
-      })
-
+      
     //LEGENDE CLINTON
     legende.append("rect")
       .classed("rect2",true)
+      .classed("pushable", true)
       .attr("y", legendeUnit*2)
-      .attr("width", legendeUnit)
-      .attr("height", legendeUnit)
+      .attr("transform", "translate(0,"+(-legendeUnit/4)+")")
+      .attr("width", legendeUnit*1.5)
+      .attr("height", legendeUnit*1.5)
       .style("fill", "#4169E1")
+      .on("click", function() {
+        if(d3.selectAll(".rect4").classed("interruptionpushable")==true){
+          if(d3.select(this).classed("pushable")==true) {
+            d3.selectAll(".CLINTON")
+              .attr("height", 0)
+            d3.select(this).classed("pushable",false)
+            d3.selectAll(".rect2")
+              .transition(1000)
+              .attr("width", legendeUnit)
+              .attr("height", legendeUnit)
+              .attr("transform", "translate(0,0)")
+          }
+          else {
+            d3.selectAll(".CLINTON")
+              .attr("height", unitH)
+            d3.select(this).classed("pushable",true)
+            d3.selectAll(".rect2")
+              .transition(1000)
+              .attr("width", legendeUnit*1.5)
+              .attr("height", legendeUnit*1.5)
+              .attr("transform", "translate(0,"+(-legendeUnit/4)+")")
+          }
+        }
+        else {
+          if(d3.select(this).classed("pushable")==true) {
+            d3.selectAll(".CLINTON")
+              .attr("height", 0)
+            d3.select(this).classed("pushable",false)
+            d3.selectAll(".rect2")
+              .transition(1000)
+              .attr("width", legendeUnit)
+              .attr("height", legendeUnit)
+              .attr("transform", "translate(0,0)")
+          }
+          else {
+            d3.selectAll(".interruption").attr("height", unitH)
+            d3.select(this).classed("pushable",true)
+            d3.selectAll(".rect2")
+              .transition(1000)
+              .attr("width", legendeUnit*1.5)
+              .attr("height", legendeUnit*1.5)
+              .attr("transform", "translate(0,"+(-legendeUnit/4)+")")
+
+          }
+        }
+      })
     legende.append("text")
       .attr("x", legendeUnit*2)
       .attr("y", legendeUnit*3)
-      .classed("pushed", true)
       .text("Clinton")
-      .on("click", function() {
-        if(d3.select(this).classed("pushed")==true) {
-          d3.selectAll(".MODERATOR")
-            .attr("height",0)
-          d3.selectAll(".TRUMP")
-            .attr("height",0)
-          d3.selectAll(".CLINTON")
-            .attr("height", unitH)
-          d3.select(this).classed("pushed",false)
-          d3.selectAll(".rect2")
-            .transition(1000)
-            .attr("width", legendeUnit*1.5)
-            .attr("height", legendeUnit*1.5)
-            .attr("transform", "translate(0,"+(-legendeUnit/4)+")")
-        }
-        else {
-          d3.selectAll(".MODERATOR")
-            .attr("height",unitH)
-          d3.selectAll(".TRUMP")
-            .attr("height",unitH)
-          d3.selectAll(".CLINTON")
-            .attr("height", unitH)
-          d3.select(this).classed("pushed",true)
-          d3.selectAll(".rect2")
-            .transition(1000)
-            .attr("width", legendeUnit)
-            .attr("height", legendeUnit)
-            .attr("transform", "translate(0,0)")
-        }
-      })
-
+      
     //LEGENDE TRUMP
     legende.append("rect")
       .classed("rect3",true)
-      .attr("width", legendeUnit)
-      .attr("height", legendeUnit)
+      .classed("pushable", true)
+      .attr("width", legendeUnit*1.5)
+      .attr("height", legendeUnit*1.5)
       .attr("y", legendeUnit*4)
+      .attr("transform", "translate(0,"+(-legendeUnit/4)+")")
       .style("fill", "#DC143C")
+      .on("click", function() {
+        if(d3.selectAll(".rect4").classed("interruptionpushable")==true){
+          if(d3.select(this).classed("pushable")==true) {
+            d3.selectAll(".TRUMP")
+              .attr("height", 0)
+            d3.select(this).classed("pushable",false)
+            d3.selectAll(".rect3")
+              .transition(1000)
+              .attr("width", legendeUnit)
+              .attr("height", legendeUnit)
+              .attr("transform", "translate(0,0)")
+          }
+          else {
+            d3.selectAll(".TRUMP")
+              .attr("height", unitH)
+            d3.select(this).classed("pushable",true)
+            d3.selectAll(".rect3")
+              .transition(1000)
+              .attr("width", legendeUnit*1.5)
+              .attr("height", legendeUnit*1.5)
+              .attr("transform", "translate(0,"+(-legendeUnit/4)+")")
+          }
+        }
+        else {
+          if(d3.select(this).classed("pushable")==true) {
+            d3.selectAll(".TRUMP")
+              .attr("height", 0)
+            d3.select(this).classed("pushable",false)
+            d3.selectAll(".rect3")
+              .transition(1000)
+              .attr("width", legendeUnit)
+              .attr("height", legendeUnit)
+              .attr("transform", "translate(0,0)")
+          }
+          else {
+            d3.selectAll(".interruption").attr("height", unitH)
+            d3.select(this).classed("pushable",true)
+            d3.selectAll(".rect3")
+              .transition(1000)
+              .attr("width", legendeUnit*1.5)
+              .attr("height", legendeUnit*1.5)
+              .attr("transform", "translate(0,"+(-legendeUnit/4)+")")
+
+          }
+        }
+      })
     legende.append("text")
       .attr("x", legendeUnit*2)
       .attr("y", legendeUnit*5)
-      .classed("pushed", true)
       .text("Trump")
-      .on("click", function() {
-        if(d3.select(this).classed("pushed")==true) {
-          d3.selectAll(".CLINTON")
-            .attr("height",0)
-          d3.selectAll(".MODERATOR")
-            .attr("height",0)
-          d3.selectAll(".TRUMP")
-            .attr("height", unitH)
-          d3.select(this).classed("pushed",false)
-          d3.selectAll(".rect3")
-            .transition(1000)
-            .attr("width", legendeUnit*1.5)
-            .attr("height", legendeUnit*1.5)
-            .attr("transform", "translate(0,"+(-legendeUnit/4)+")")
-        }
-        else {
-          d3.selectAll(".CLINTON")
-            .attr("height",unitH)
-          d3.selectAll(".MODERATOR")
-            .attr("height",unitH)
-          d3.selectAll(".TRUMP")
-            .attr("height", unitH)
-          d3.select(this).classed("pushed",true)
-          d3.selectAll(".rect3")
-            .transition(1000)
-            .attr("width", legendeUnit)
-            .attr("height", legendeUnit)
-            .attr("transform", "translate(0,0)")
-        }
-      })
-
+      
     //LEGENDE INTERRUPTION
     legende.append("rect")
       .classed("rect4",true)
+      .classed("interruptionpushable",true)
       .attr("width", legendeUnit)
       .attr("height", legendeUnit)
       .attr("y", legendeUnit*6)
       .style("fill", "black")
-    legende.append("text")
-      .attr("x", legendeUnit*2)
-      .attr("y", legendeUnit*7)
-      .classed("interruptionPushed",true)
-      .text("Interruption")
       .on("click", function() {
-        if(d3.select(this).classed("interruptionPushed")) {
-          d3.selectAll(".interruption").attr("height", function() {
-            return unitH*2
-          })
-          d3.selectAll(".interruption").attr("y", function() {
-            return -(unitH*2);
-          })
-          d3.select(this).classed("interruptionPushed",false)
+        if(d3.select(this).classed("interruptionpushable")) {
+          if(d3.selectAll(".rect1").classed("pushable")==false){
+            d3.selectAll(".MODERATOR")
+              .attr("height", unitH)
+            d3.selectAll(".rect1")
+              .transition(1000)
+              .attr("width", legendeUnit*1.5)
+              .attr("height", legendeUnit*1.5)
+              .attr("transform", "translate(0,"+(-legendeUnit/4)+")")
+          }
+          if(d3.selectAll(".rect2").classed("pushable")==false){
+            d3.selectAll(".CLINTON")
+              .attr("height", unitH)
+            d3.selectAll(".rect2")
+              .transition(1000)
+              .attr("width", legendeUnit*1.5)
+              .attr("height", legendeUnit*1.5)
+              .attr("transform", "translate(0,"+(-legendeUnit/4)+")")
+          }
+          if(d3.selectAll(".rect3").classed("pushable")==false){
+            d3.selectAll(".TRUMP")
+              .attr("height", unitH)
+            d3.selectAll(".rect3")
+              .transition(1000)
+              .attr("width", legendeUnit*1.5)
+              .attr("height", legendeUnit*1.5)
+              .attr("transform", "translate(0,"+(-legendeUnit/4)+")")
+          }
+          d3.selectAll(".MODERATOR").attr("height",0)
+          d3.selectAll(".CLINTON").attr("height",0)
+          d3.selectAll(".TRUMP").attr("height",0)
+          d3.selectAll(".interruption").attr("height",unitH)
+          d3.select(this).classed("interruptionpushable",false)
           d3.selectAll(".rect4")
             .transition(1000)
             .attr("width", legendeUnit*1.5)
@@ -201,13 +320,10 @@ function chrono(link) {
             .attr("transform", "translate(0,"+(-legendeUnit/4)+")")
         }
         else {
-          d3.selectAll(".interruption").attr("height", function() {
-            return unitH;
-          })
-          d3.selectAll(".interruption").attr("y", function() {
-            return -(unitH);
-          })
-          d3.select(this).classed("interruptionPushed",true)
+          d3.select(this).classed("interruptionpushable",true)
+          d3.selectAll(".MODERATOR").attr("height",unitH)
+          d3.selectAll(".CLINTON").attr("height",unitH)
+          d3.selectAll(".TRUMP").attr("height",unitH)
           d3.selectAll(".rect4")
             .transition(1000)
             .attr("width", legendeUnit)
@@ -215,6 +331,18 @@ function chrono(link) {
             .attr("transform", "translate(0,0)")
         }
       })
+    legende.append("text")
+      .attr("x", legendeUnit*2)
+      .attr("y", legendeUnit*7)
+      .text("Interruption")
+      
+    //SVG PRINCIPALE
+    var svg = d3.select("body")
+      .append("svg")
+      .attr("width", w)
+      .attr("height", h)
+      .append("g")
+      .attr("transform", "translate("+decalage+","+(h-decalage)+")")
 
     var tooltip = d3.select("body")
       .append("div")
@@ -228,42 +356,52 @@ function chrono(link) {
       .style("border-width", "2px")
       .style("border-color","grey")
 
-    //SVG PRINCIPALE
-    var svg = d3.select("body")
-      .append("svg")
-      .attr("width", w)
-      .attr("height", h)
-      .append("g")
-      .attr("transform", "translate("+decalage+","+(h-decalage)+")")
-
     //CREATION AXE X
-    var axisScale = d3.scaleBand()
-      .domain(["Achieving prosperity", "America's direction","Securing America"])
-      .range([0, maxRange])
-    var xAxis = d3.axisBottom(axisScale)
-    svg.append("g")
+    if(link=="data/chrono.csv") {
+      var axisScale = d3.scaleBand()
+        .domain(["Achieving prosperity", "America's direction","Securing America"])
+        .range([0, maxRange])
+      var xAxis = d3.axisBottom(axisScale)
+      svg.append("g")
         .call(xAxis)
+    }
+    else if(link=="data/chrono2.csv") {
+      var axisScale = d3.scaleBand()
+        .domain(["The Affordable Care Act", "Islamophobia and Syrian refugees","Wikileaks and taxes","The war in Syria","Leadership"])
+        .range([0, maxRange])
+      var xAxis = d3.axisBottom(axisScale)
+      svg.append("g")
+        .call(xAxis)        
+    }
+    else {
+      var axisScale = d3.scaleBand()
+        .domain(["debt and entitlements", "immigration, the economy","the Supreme Court","foreign hot spots","fitness to be president"])
+        .range([0, maxRange])
+      var xAxis = d3.axisBottom(axisScale)
+      svg.append("g")
+        .call(xAxis)   
+    }
 
     //CREATION CHRONOLOGIE
     svg.selectAll(".debateUnit")
       .data(data)
       .enter()
       .append("rect")
-      .attr("class", function(d) {
+      .attr("class", function(d,i) {
         if(d.orateur=="MODERATOR"){
-          return d.orateur;
+          return d.orateur+" "+"unit"+i+" debateUnit";
         }
         else if(d.orateur=="CLINTON") {
           if(d.longueur<20 && d.X>500) {
-            return d.orateur+" "+"interruption";
+            return d.orateur+" "+"interruption"+" "+"unit"+i+" debateUnit";
           }
-          return d.orateur;
+          return d.orateur+" "+"unit"+i+" debateUnit";
         }
         else {
           if(d.longueur<20 && d.X>500) {
-            return d.orateur+" "+"interruption";
+            return d.orateur+" "+"interruption"+" "+"unit"+i+" debateUnit";
           }
-          return d.orateur;
+          return d.orateur+" "+"unit"+i+" debateUnit";
         }
       })
       .on("mouseover", function(d) {
