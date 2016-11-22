@@ -1,11 +1,46 @@
 <!DOCTYPE html>
-<html>
-<body>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+		
+		<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
-	<h1>Visualisation d3 pour Le Devoir</h1>
-	<a href="./WordsCount/WordsCount.html"> Répartition des temps de paroles </a>
-	<br>
-	<a href="./Chrono/Chrono.html"> Chronologie des débats Présidentiels américains </a>
+		<style type="text/css">
+			.container1{
+				margin-top: 30px;
+				margin-left: 30px;
+				width: 400px;
+			}
+			.title {
+				margin-left: 30px;
+			}
+		</style>
 
-</body>
+  </head>
+	<body>
+
+		<h1 class="title">Visualisation d3 pour Le Devoir</h1>
+
+		<div class="panel panel-default container1">
+			<div class="panel-heading">Visualisations Débats Présidentiels US</div>
+				<div class="panel-body">
+					<a href="./Chrono/Chrono.html">Chronologie des débats Présidentiels américains</a>
+				</div>
+				<div class="panel-body">
+					<a href="./WordsCount/WordsCount.html"> Répartition des temps de paroles </a>
+				</div>
+		</div>
+
+		<div class="panel panel-default container1">
+			<div class="panel-heading">Visualisation Carte Pauvreté Montréal</div>
+				<div class="panel-body">
+					<a href="./Carte/Carte.html">Carte pauvrété MTL</a>
+				</div>
+		</div>		
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+		<script src="bootstrap/js/bootstrap.min.js"></script>
+	</body>
 </html>
