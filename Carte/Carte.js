@@ -6,8 +6,12 @@ var mymap = L.map('mapid', {
 	zoom: 11
 });
 
+// CARTE OSM
+//http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png
+
 L.tileLayer('https://api.mapbox.com/styles/v1/robpqt/civtpq686000n2kkxyujcbnjc/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoicm9icHF0IiwiYSI6ImNpdnRwb2xmODAwMGkyb28wajFsMnpuN3QifQ.JjqbNi_h4A7KFvH0cRbrTA', {
 }).addTo(mymap);
 
-var svg = d3.select(mymap.getPanes().overlayPane).append("svg")
-var g = svg.append("g").attr("class", "leaflet-zoom-hide");
+$.getJSON("data/geojsonLayer.json",function(data){
+  L.geoJson(data).addTo(mymap);
+});

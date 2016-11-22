@@ -117,6 +117,9 @@ function chrono(link) {
             d3.select(".unit"+j)
               .transition(1000)
               .attr("y", -(unitH+20))
+
+            
+
             incr1+=1;
         }
       }
