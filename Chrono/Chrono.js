@@ -1,10 +1,11 @@
 //VARIABLES GENERALES
 var w = 900;
-var h = 200;
+var h = 150;
 var decalage = 20;	
 var unitH = 100;
 var maxRange = w - 50;
 var legendeUnit = 10;
+var incrementation = 0;
 
 var color = d3.scaleOrdinal()
 	.range(["#FFD700", "#4169E1", "#DC143C" ]);
@@ -16,6 +17,8 @@ chrono("data/chrono.csv");
 //FONCTION CREATION RENDU VISUEL
 function chrono(link) {
   d3.csv(link, function(data) {
+
+    incrementation+=1;
 
     //Mise à l'échelle de la longueur du débat
     var echelle = maxRange/(+data[data.length-1].longueur+(+data[data.length-1].X));
@@ -36,52 +39,67 @@ function chrono(link) {
       })
       .style("text-align","center")
     
+    //LA BARRE DE RECHERCHE
     var recherche = d3.select("body")
       .append("form")
+      .attr("class", function () {
+        switch(link) {
+          case "data/chrono.csv":
+            return "bloc1";
+            break;
+
+          case "data/chrono2.csv":
+            return "bloc2";
+            break;
+
+          case "data/chrono3.csv":
+            return "bloc3";
+            break;
+        }
+      })
+      .classed("formulaire",true)
+
     recherche.append("input")
-        .attr("id","recherche")
-        .attr("type","text")
-        .attr("placeholder","Rechercher un mot")
-    recherche.append("input").attr("type","button")
+      .attr("id","recherche")
+      .attr("type","text")
+      .attr("placeholder","Rechercher un mot")
+    recherche.append("input")
+      .attr("class","inputRecherche")
+      .attr("type","button")
       .attr("value","Rechercher")
 
-    var inputElem = d3.selectAll("input")
-
+    //METTRE LES MOTS DANS UN TABLEAU SANS PONCTUATION
     var tab=[];
-    var i=0;
-    for(i=0; i<data.length; i++){
+    for(var i=0; i<data.length; i++){
       var temp = data[i].text;
       temp = temp.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"")
       temp = temp.toLowerCase();
       tab[i] = temp.split(" ");
     } 
-
-    console.log(tab[0])
-
+    
     //FONCTION DE RECHERCHE
+    var inputElem = d3.selectAll("input")
     inputElem.on("change", inputChange)
+    
     function inputChange() {
+
       var temp = this.value;
       var tabRecherche = temp.split(" ");
       var longeurTabRecherche = tabRecherche.length;
       var tot = 0;
-      var tabIndice = [];
       var incr1=0;
-
-      var j=0;
-      var k=0;
-      var l=0;
+      var tabIndice = [];
 
       d3.selectAll(".debateUnit").attr("y", -unitH)
 
-      for(j=0; j<data.length; j++){
+      for(var j=0; j<data.length; j++){
        // alert("TEST UNO, j: "+j)
-        for(k=0; k<tab[j].length-longeurTabRecherche; k++) {
+        for(var k=0; k<tab[j].length-longeurTabRecherche; k++) {
           //alert("TEST DUO, k "+k)
           if(tabRecherche[0]==tab[j][k]){
             var incr = 0;
             tot=0;
-            for(l=k; l<(k+longeurTabRecherche); l++) {
+            for(var l=k; l<(k+longeurTabRecherche); l++) {
               if(tab[j][l]==tabRecherche[incr]) {
                 tot+=1;              }
               incr+=1;
@@ -96,15 +114,14 @@ function chrono(link) {
 
       for(j=0; j<data.length; j++){
         if(j==tabIndice[incr1]) {
-          console.log("je rentre ici")
-          d3.select(".unit"+j)
-            .transition(1000)
-            .attr("y", -(unitH+20))
-
-          incr1+=1;
+            d3.select(".unit"+j)
+              .transition(1000)
+              .attr("y", -(unitH+20))
+            incr1+=1;
         }
       }
     }
+
     //SVG LEGENDE
     var legende = d3.select("body")
       .append("svg")
@@ -344,6 +361,7 @@ function chrono(link) {
       .append("g")
       .attr("transform", "translate("+decalage+","+(h-decalage)+")")
 
+    //LE TOOLTIP POUR AFFICHER LE TEXTE
     var tooltip = d3.select("body")
       .append("div")
       .attr("class", "tooltip")
@@ -388,20 +406,58 @@ function chrono(link) {
       .enter()
       .append("rect")
       .attr("class", function(d,i) {
-        if(d.orateur=="MODERATOR"){
-          return d.orateur+" "+"unit"+i+" debateUnit";
-        }
-        else if(d.orateur=="CLINTON") {
-          if(d.longueur<20 && d.X>500) {
-            return d.orateur+" "+"interruption"+" "+"unit"+i+" debateUnit";
-          }
-          return d.orateur+" "+"unit"+i+" debateUnit";
-        }
-        else {
-          if(d.longueur<20 && d.X>500) {
-            return d.orateur+" "+"interruption"+" "+"unit"+i+" debateUnit";
-          }
-          return d.orateur+" "+"unit"+i+" debateUnit";
+        switch(link) {
+          case "data/chrono.csv":
+            if(d.orateur=="MODERATOR"){
+              return d.orateur+" "+"unit"+i+" debateUnit"+" bloc1";
+            }
+            else if(d.orateur=="CLINTON") {
+              if(d.longueur<20 && d.X>500) {
+                return d.orateur+" "+"interruption"+" "+"unit"+i+" debateUnit"+" bloc1";
+              }
+              return d.orateur+" "+"unit"+i+" debateUnit"+" bloc1";
+            }
+            else {
+              if(d.longueur<20 && d.X>500) {
+                return d.orateur+" "+"interruption"+" "+"unit"+i+" debateUnit"+" bloc1";
+              }
+              return d.orateur+" "+"unit"+i+" debateUnit"+" bloc1";
+            }
+          break;
+          case "data/chrono2.csv":
+            if(d.orateur=="MODERATOR"){
+              return d.orateur+" "+"unit"+i+" debateUnit"+" bloc2";
+            }
+            else if(d.orateur=="CLINTON") {
+              if(d.longueur<20 && d.X>500) {
+                return d.orateur+" "+"interruption"+" "+"unit"+i+" debateUnit"+" bloc2";
+              }
+              return d.orateur+" "+"unit"+i+" debateUnit"+" bloc2";
+            }
+            else {
+              if(d.longueur<20 && d.X>500) {
+                return d.orateur+" "+"interruption"+" "+"unit"+i+" debateUnit"+" bloc2";
+              }
+              return d.orateur+" "+"unit"+i+" debateUnit"+" bloc2";
+            }
+          break;
+          case "data/chrono3.csv":
+            if(d.orateur=="MODERATOR"){
+              return d.orateur+" "+"unit"+i+" debateUnit"+" bloc3";
+            }
+            else if(d.orateur=="CLINTON") {
+              if(d.longueur<20 && d.X>500) {
+                return d.orateur+" "+"interruption"+" "+"unit"+i+" debateUnit"+" bloc3";
+              }
+              return d.orateur+" "+"unit"+i+" debateUnit"+" bloc3";
+            }
+            else {
+              if(d.longueur<20 && d.X>500) {
+                return d.orateur+" "+"interruption"+" "+"unit"+i+" debateUnit"+" bloc3";
+              }
+              return d.orateur+" "+"unit"+i+" debateUnit"+" bloc3";
+            }
+          break;
         }
       })
       .on("mouseover", function(d) {
@@ -419,7 +475,6 @@ function chrono(link) {
           .attr("y", -(unitH))
         }
       tooltip.style("visibility", "hidden").text(d.text)
-
       })
       .style("fill", function(d) { return color(d.orateur) })
       .attr("width", function(d) {
