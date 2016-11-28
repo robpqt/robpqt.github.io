@@ -19,17 +19,17 @@ d3.json("data/geojsonLayer.json",function(dataJSON){
 	d3.csv("data/Zscores.csv", function(dataCSV) {
 		
 		//CALCUL DU MAX ET MIN
-		var maxRevenu = dataCSV[0].Zscore_revenu;
-		var minRevenu = dataCSV[0].Zscore_revenu;
+		var maxRevenu = dataCSV[0].Zscore_métro;
+		var minRevenu = dataCSV[0].Zscore_métro;
 		for(var i=1; i<dataCSV.length; i++) {
-			dataCSV[i].Zscore_revenu = +dataCSV[i].Zscore_revenu;
+			dataCSV[i].Zscore_métro = +dataCSV[i].Zscore_métro;
 
-			if(maxRevenu<dataCSV[i].Zscore_revenu) {
-				maxRevenu = dataCSV[i].Zscore_revenu
+			if(maxRevenu<dataCSV[i].Zscore_métro) {
+				maxRevenu = dataCSV[i].Zscore_métro
 			}
 
-			if(minRevenu>dataCSV[i].Zscore_revenu) {
-				minRevenu = dataCSV[i].Zscore_revenu
+			if(minRevenu>dataCSV[i].Zscore_métro) {
+				minRevenu = dataCSV[i].Zscore_métro
 			}
 		}
 
@@ -41,7 +41,7 @@ d3.json("data/geojsonLayer.json",function(dataJSON){
 	  		for(i=0; i<dataCSV.length; i++) {
 					if(dataCSV[i].CTNAME==feature.properties.CTNAME) {
 						return {
-							fillColor: colorScale(dataCSV[i].Zscore_revenu),
+							fillColor: colorScale(dataCSV[i].Zscore_métro),
 							weight: 1,
 			        opacity: 1,
 			        color: 'white',
