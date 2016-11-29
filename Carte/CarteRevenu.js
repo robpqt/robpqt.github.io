@@ -51,8 +51,8 @@ d3.json("data/geojsonLayer.json",function(dataJSON){
 					}
 				}
 
-				//VIDER lES ZONES SANS DONNEES
-				var temp = 1;
+			//VIDER lES ZONES SANS DONNEES
+			var temp = 1;
 	  		for(i=0; i<dataCSV.length; i++) {
 					if(feature.properties.CTNAME!=dataCSV[i].CTNAME) {
 						temp+=1;
