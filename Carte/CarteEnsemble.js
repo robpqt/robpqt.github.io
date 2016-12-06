@@ -107,6 +107,7 @@ d3.json("data/geojsonLayer2.json",function(dataJSON){
 	});
 });
 
+//CARTE BIXI
 d3.json("data/geojsonLayer2.json",function(dataJSON){
 	d3.csv("data/Classeur1.csv", function(dataCSV) {
 		d3.csv("data/Zscores2.csv", function(dataCSV2) {
