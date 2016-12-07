@@ -115,10 +115,7 @@ d3.json("data/geojsonLayer2.json",function(dataJSON){
 					.style("fill-opacity",0)
 					.style("stroke", "green")
 					.style("stroke-width", "1")
-					.on("mouseover", function(d){
-						d3.select(".classQuartier")
-							.text(d.properties.Q_socio)
-					})
+					
 						
 
 					
