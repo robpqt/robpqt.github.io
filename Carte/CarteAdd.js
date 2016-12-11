@@ -16,6 +16,14 @@ d3.json("data/geojsonLayer2.json",function(dataJSON){
 					.attr("width", w)
 					.attr("height", h)
 
+				var legend = svg.append("g")
+					.attr("transform","translate(5,20)")
+
+				legend.append("text")
+					.attr("class","classQuartier")
+					.attr("dy",20)
+					.text("Passez votre curseur un quartier pour avoir son nom")
+
 				color.domain([
 			        d3.min(dataCSV, function(d) { 
 			        	var temp1=(+d.Z_MetroAccess)
@@ -100,17 +108,7 @@ d3.json("data/geojsonLayer2.json",function(dataJSON){
 
 				var path = d3.geoPath().projection(projection);
 
-				svg.append("g").selectAll("path")
-					.data(dataJSON2.features)
-					.enter()
-					.append("path")
-					.attr("d",path)
-					.attr("class",function(d,i){
-						return "quartier"+i;
-					})
-					.style("fill-opacity",0)
-					.style("stroke", "green")
-					.style("stroke-width", "1")
+				
 				
 
 				svg.append("g").selectAll("path")
@@ -135,6 +133,25 @@ d3.json("data/geojsonLayer2.json",function(dataJSON){
 								return color(tot2);
 							}
 						}
+					})
+
+				svg.append("g").selectAll("path")
+					.data(dataJSON2.features)
+					.enter()
+					.append("path")
+					.attr("d",path)
+					.attr("class",function(d,i){
+						return "quartier"+i;
+					})
+					.style("fill-opacity",0)
+					.style("stroke", "green")
+					.style("stroke-width", "1")
+					.on("mouseover", function(d){
+						d3.select(".classQuartier").text(d.properties.Q_socio)
+						d3.select(this).style("fill","green").style("fill-opacity",0.3)
+					})
+					.on("mouseout",function(d) {
+						d3.select(this).style("fill-opacity",0)
 					})
 			});
 		});		

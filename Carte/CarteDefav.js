@@ -20,9 +20,13 @@ d3.json("data/geojsonLayer2.json",function(dataJSON){
 					.attr("transform","translate(5,20)")
 
 				legend.append("text")
+					.attr("class","classQuartier")
+					.attr("dy",0)
+					.text("Passez votre curseur sur une zone pour avoir ses données")
+				legend.append("text")
 					.attr("class","classRevenu")
 					.attr("dy",20)
-					.text("Passez votre curseur sur une zone pour avoir ses données")
+					.text("")
 				legend.append("text")
 					.attr("class","classEducation")
 					.attr("dy",40)
@@ -102,23 +106,7 @@ d3.json("data/geojsonLayer2.json",function(dataJSON){
 					.translate(offset);
 
 				var path = d3.geoPath().projection(projection);
-
-				
-				svg.append("g").selectAll("path")
-					.data(dataJSON2.features)
-					.enter()
-					.append("path")
-					.attr("d",path)
-					.attr("class",function(d,i){
-						return "quartier"+i;
-					})
-					.style("fill-opacity",0)
-					.style("stroke", "green")
-					.style("stroke-width", "1")
-					
-						
-
-					
+	
 				svg.append("g").selectAll("path")
 					.data(dataJSON.features)
 					.enter()
@@ -161,11 +149,9 @@ d3.json("data/geojsonLayer2.json",function(dataJSON){
 							}
 						})
 					})
-					.on("mousemove", function(d) {
-					})	
 
-										
 
+				
 					
 			});		
 		});
