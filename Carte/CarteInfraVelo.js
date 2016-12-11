@@ -27,8 +27,8 @@ d3.json("data/geojsonLayer2.json",function(dataJSON){
 					.text("Passez votre curseur un quartier pour avoir son nom")
 
 				color.domain([
-			        d3.min(dataCSV, function(d) { return d.Z_Z_CyclingPct; }),
-			        d3.max(dataCSV, function(d) { return d.Z_Z_CyclingPct; })
+			        d3.min(dataCSV, function(d) { return d.Z_CyclingPct; }),
+			        d3.max(dataCSV, function(d) { return d.Z_CyclingPct; })
 		    	]);
 
 				var center = d3.geoCentroid(dataJSON)
@@ -52,7 +52,7 @@ d3.json("data/geojsonLayer2.json",function(dataJSON){
 					.style("fill", function(d) {
 						for(var i=0; i<dataCSV.length; i++) {
 							if(d.properties.CTUID==dataCSV[i].CTUID) {
-								return color(dataCSV[i].Z_Z_CyclingPct);
+								return color(dataCSV[i].Z_CyclingPct);
 							}
 						}
 					})
