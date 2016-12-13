@@ -1,4 +1,6 @@
 var w= 600, h = 500;
+var margin = {top: 10, right: 10, bottom: 10, left: 0},
+    centered;
 
 var color = d3.scaleQuantize()
 	.range(['#edf8fb','#ccece6','#99d8c9','#66c2a4','#41ae76','#238b45','#005824']);
@@ -6,7 +8,7 @@ var color = d3.scaleQuantize()
 //CARTE DESAVANTAGES MTL
 d3.json("data/geojsonLayer2.json",function(dataJSON){
 	d3.json("data/quartier.json",function(dataJSON2){
-		d3.csv("data/Classeur1.csv", function(dataCSV) {
+		d3.csv("data/Classeur1-2.csv", function(dataCSV) {
 			d3.csv("data/Zscores2.csv", function(dataCSV2) {
 
 				// var titre = d3.select("body").append("div")
@@ -15,8 +17,12 @@ d3.json("data/geojsonLayer2.json",function(dataJSON){
 				var svg = d3.select("body").append("svg")
 					.attr("width", w)
 					.attr("height", h)
-					.attr("viewBox", "0 0 600 500")
-					.attr("preserveAspectRatio", "xMidYMid meet")
+				    .attr("viewBox", [
+				        margin.left,
+				        margin.top,
+				        (w+margin.left),
+				        (h+margin.bottom)
+					].join(" "))
 
 				var legend = svg.append("g")
 					.attr("transform","translate(5,20)")

@@ -1,4 +1,6 @@
 var w= 600, h = 500;
+var margin = {top: 10, right: 10, bottom: 10, left: 0},
+    centered;
 
 var color = d3.scaleQuantize()
 	.range(['#edf8fb','#ccece6','#99d8c9','#66c2a4','#41ae76','#238b45','#005824']);
@@ -11,7 +13,12 @@ d3.json("data/geojsonLayer2.json",function(dataJSON){
 				var svg = d3.select("body").append("svg")
 					.attr("width", w)
 					.attr("height", h)
-
+					.attr("viewBox", [
+				        margin.left,
+				        margin.top,
+				        (w+margin.left),
+				        (h+margin.bottom)
+					].join(" "))
 				var legend = svg.append("g")
 					.attr("transform","translate(5,20)")
 
