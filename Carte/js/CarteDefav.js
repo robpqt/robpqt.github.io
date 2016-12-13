@@ -14,7 +14,7 @@ d3.json("data/geojsonLayer2.json",function(dataJSON){
 				// var titre = d3.select("body").append("div")
 				// 	.text("Quartiers défavorisés de l'île de Montréal")
 
-				var svg = d3.select("body").append("svg")
+				var svg = d3.select("#carte")
 					.attr("width", w)
 					.attr("height", h)
 				    .attr("viewBox", [

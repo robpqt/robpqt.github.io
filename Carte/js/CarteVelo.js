@@ -10,10 +10,10 @@ d3.json("data/geojsonLayer2.json",function(dataJSON){
 		d3.csv("data/Classeur1.csv", function(dataCSV) {
 			d3.csv("data/Zscores2.csv", function(dataCSV2) {
 
-				var svg = d3.select("body").append("svg")
+				var svg = d3.select("#carte")
 					.attr("width", w)
 					.attr("height", h)
-					.attr("viewBox", [
+				    .attr("viewBox", [
 				        margin.left,
 				        margin.top,
 				        (w+margin.left),
@@ -22,9 +22,7 @@ d3.json("data/geojsonLayer2.json",function(dataJSON){
 				var legend = svg.append("g")
 					.attr("transform","translate(5,20)")
 
-				var legend = svg.append("g")
-					.attr("transform","translate(5,20)")
-
+				
 				// legend.append("text")
 				// 	.attr("class","classQuartier")
 				// 	.attr("dy",5)

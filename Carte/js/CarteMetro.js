@@ -13,10 +13,10 @@ d3.json("data/geojsonLayer2.json",function(dataJSON){
 				// var titre = d3.select("body").append("div").classed("titre",true)
 				// 	.text("Proximité du métro")
 
-				var svg = d3.select("body").append("svg")
+				var svg = d3.select("#carte")
 					.attr("width", w)
 					.attr("height", h)
-					.attr("viewBox", [
+				    .attr("viewBox", [
 				        margin.left,
 				        margin.top,
 				        (w+margin.left),
