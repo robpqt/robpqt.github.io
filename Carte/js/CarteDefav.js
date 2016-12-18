@@ -6,13 +6,10 @@ var color = d3.scaleQuantize()
 	.range(['#edf8fb','#ccece6','#99d8c9','#66c2a4','#41ae76','#238b45','#005824']);
 
 //CARTE DESAVANTAGES MTL
-d3.json("data/geojsonLayer2.json",function(dataJSON){
+d3.json("data/zoneRes.json",function(dataJSON){
 	d3.json("data/quartier.json",function(dataJSON2){
-		d3.csv("data/Classeur1-2.csv", function(dataCSV) {
-			d3.csv("data/Zscores2.csv", function(dataCSV2) {
-
-				// var titre = d3.select("body").append("div")
-				// 	.text("Quartiers défavorisés de l'île de Montréal")
+		d3.csv("data/Zscore.csv", function(dataCSV) {
+			d3.csv("data/Realscore.csv", function(dataCSV2) {
 
 				var svg = d3.select("#carte")
 					.attr("width", w)

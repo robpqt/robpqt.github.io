@@ -5,13 +5,10 @@ var margin = {top: 10, right: 10, bottom: 10, left: 0},
 var color = d3.scaleQuantize()
 	.range(['#edf8fb','#ccece6','#99d8c9','#66c2a4','#41ae76','#238b45','#005824']);
 //CARTE METRO
-d3.json("data/geojsonLayer2.json",function(dataJSON){
+d3.json("data/zoneRes.json",function(dataJSON){
 	d3.json("data/quartier.json",function(dataJSON2){
-		d3.csv("data/Classeur1-2.csv", function(dataCSV) {
-			d3.csv("data/Zscores2.csv", function(dataCSV2) {
-
-				// var titre = d3.select("body").append("div").classed("titre",true)
-				// 	.text("Proximité au Bus")
+		d3.csv("data/Zscore.csv", function(dataCSV) {
+			d3.csv("data/Realscore.csv", function(dataCSV2) {
 
 				var svg = d3.select("#carte")
 					.attr("width", w)
@@ -26,10 +23,14 @@ d3.json("data/geojsonLayer2.json",function(dataJSON){
 				var legend = svg.append("g")
 					.attr("transform","translate(5,20)")
 
-				// legend.append("text")
-				// 	.attr("class","classQuartier")
-				// 	.attr("dy",20)
-				// 	.text("Passez votre curseur un quartier pour avoir son nom")
+				legend.append("text")
+					.attr("class","classQuartier")
+					.attr("dy",10)
+					.text("Passez sur une zone pour afficher le pourcentage d'automobiliste")
+				legend.append("text")
+					.attr("class","classPct")
+					.attr("dy",30)
+					.text("")
 
 				color.domain([
 			        d3.min(dataCSV, function(d) { return d.Z_DriversPct; }),
@@ -61,7 +62,17 @@ d3.json("data/geojsonLayer2.json",function(dataJSON){
 							}
 						}
 					})
+					.on("mouseover",function(d){
+						d3.select(".classPct").text(function(){
+							for(var i=0; i<dataCSV.length; i++) {
+								if(d.properties.CTUID==dataCSV2[i].CTUID) {
+									return "Pourcentage d'automobiliste : "+Math.floor((dataCSV2[i].DriversPct)*100)+" %";
+								}
+							}
+						})
+					})
 
+				
 				svg.append("g").selectAll("path")
 					.data(dataJSON2.features)
 					.enter()
@@ -70,7 +81,7 @@ d3.json("data/geojsonLayer2.json",function(dataJSON){
 					.attr("class",function(d,i){
 						return "quartier"+i;
 					})
-					.style("fill-opacity",0)
+					.style("fill","none")
 					.style("stroke", "green")
 					.style("stroke-width", "1")
 					.on("mouseover", function(d){
@@ -80,6 +91,7 @@ d3.json("data/geojsonLayer2.json",function(dataJSON){
 					.on("mouseout",function(d) {
 						d3.select(this).style("fill-opacity",0)
 					})
+
 			});
 		});
 	});

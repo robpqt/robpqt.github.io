@@ -5,10 +5,10 @@ var margin = {top: 10, right: 10, bottom: 10, left: 0},
 var color = d3.scaleQuantize()
 	.range(['#edf8fb','#ccece6','#99d8c9','#66c2a4','#41ae76','#238b45','#005824']);
 //CARTE METRO
-d3.json("data/geojsonLayer2.json",function(dataJSON){
+d3.json("data/zoneRes.json",function(dataJSON){
 	d3.json("data/quartier.json",function(dataJSON2){
-		d3.csv("data/Classeur1.csv", function(dataCSV) {
-			d3.csv("data/Zscores2.csv", function(dataCSV2) {
+		d3.csv("data/Zscore.csv", function(dataCSV) {
+			d3.csv("data/Realscore.csv", function(dataCSV2) {
 
 				// var titre = d3.select("body").append("div").classed("titre",true)
 				// 	.text("Proximité du métro")
